@@ -507,6 +507,7 @@ if run_btn:
     results = None
     err = None
 
+    nstep = 0
     for ev in run_omega_streamed(orch, scenario_text, telemetry, images, evidence):
         et = ev.get("type")
         if et == "token":
@@ -514,13 +515,16 @@ if run_btn:
             buffers.setdefault(agent, "")
             buffers[agent] += ev["delta"]
             tok += max(len(ev["delta"]) // 4, 1)
-            elapsed = max(time.time() - start_time, 0.01)
-            tps_box.markdown(
-                f'<div class="acc-green" style="font-family:Orbitron,sans-serif; font-weight:900; font-size:1.6em;">'
-                f'{tok/elapsed:,.0f} <span style="font-size:0.5em; color:#8899A6;">SWARM TOKENS/SEC</span></div>',
-                unsafe_allow_html=True,
-            )
-            _render(agent)
+            nstep += 1
+            # ponytail: throttle UI redraws (1 in 3) so 1000+ tokens stay smooth; render every token if laggy
+            if nstep % 3 == 0:
+                elapsed = max(time.time() - start_time, 0.01)
+                tps_box.markdown(
+                    f'<div class="acc-green" style="font-family:Orbitron,sans-serif; font-weight:900; font-size:1.6em;">'
+                    f'{tok/elapsed:,.0f} <span style="font-size:0.5em; color:#8899A6;">SWARM TOKENS/SEC</span></div>',
+                    unsafe_allow_html=True,
+                )
+                _render(agent)
         elif et == "stage":
             stage_box.markdown(
                 f'<span class="badge badge-warn">{ev["name"].replace("_"," ").upper()}</span> '
@@ -535,6 +539,9 @@ if run_btn:
     if err or results is None:
         st.error(f"Omega engine failed: {err or 'no results'}")
         st.stop()
+
+    for a in list(buffers):  # flush final tails the throttle may have skipped
+        _render(a)
 
     total_time = time.time() - start_time
     tps_box.markdown(
