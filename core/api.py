@@ -106,19 +106,28 @@ async def call_gemma_stream(
     if reasoning_effort in ("low", "medium", "high"):
         kwargs["reasoning_effort"] = reasoning_effort
 
-    parts: List[str] = []
+    # gemma-4-31b with reasoning_effort streams thinking tokens as delta.reasoning,
+    # and the final answer as delta.content. Show both live; return content for downstream logic.
+    content_parts: List[str] = []
+    reasoning_parts: List[str] = []
     try:
         stream = await client.chat.completions.create(**kwargs)
         async for chunk in stream:
-            delta = chunk.choices[0].delta.content or ""
-            if delta:
-                parts.append(delta)
+            delta = chunk.choices[0].delta
+            r = getattr(delta, "reasoning", None)
+            c = getattr(delta, "content", None)
+            if r:
+                reasoning_parts.append(r)
                 if on_delta:
-                    on_delta(delta)
+                    on_delta(r)
+            if c:
+                content_parts.append(c)
+                if on_delta:
+                    on_delta(c)
     except Exception as e:
         logger.error(f"Stream call failed: {e}")
         raise
-    return "".join(parts)
+    return "".join(content_parts) if content_parts else "".join(reasoning_parts)
 
 
 async def call_gemma_json(

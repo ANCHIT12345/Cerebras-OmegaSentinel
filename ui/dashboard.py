@@ -404,7 +404,7 @@ with st.sidebar:
             })
 
     st.markdown("### 📸 Upload Visual Evidence")
-    st.caption("Images shown for reference only — model does not support vision input.")
+    st.caption("Images are OCR'd locally — agents read the extracted text (gemma-4-31b is text-only).")
     arch_img = st.file_uploader("Architecture Diagram", type=["png", "jpg", "jpeg"], key="arch")
     dash_img = st.file_uploader("Dashboard Screenshot (Grafana/Datadog)", type=["png", "jpg", "jpeg"], key="dash")
     tweet_img = st.file_uploader("Social Media Screenshot", type=["png", "jpg", "jpeg"], key="tweet")
@@ -695,7 +695,7 @@ if "last_results" in st.session_state:
 
     # ─── Downloads ───
     st.markdown('<div class="section-header"><span class="section-tile bg-blue acc-blue">📥</span><span class="acc-blue">Downloads</span></div>', unsafe_allow_html=True)
-    dc1, dc2 = st.columns(2)
+    dc1, dc2, dc3 = st.columns(3)
     with dc1:
         st.download_button(
             "📥 Download Audit Trail (JSON)",
@@ -709,6 +709,13 @@ if "last_results" in st.session_state:
             data=results["post_mortem"],
             file_name=f"post_mortem_{datetime.now().strftime('%Y%m%d_%H%M%S')}.md",
             mime="text/markdown",
+        )
+    with dc3:
+        st.download_button(
+            "📤 Download Verdict Card (PNG)",
+            data=render_verdict_png(results),
+            file_name="omega_verdict.png",
+            mime="image/png",
         )
 
 
