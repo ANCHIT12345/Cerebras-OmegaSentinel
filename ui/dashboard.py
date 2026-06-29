@@ -738,7 +738,7 @@ if not run_btn and "last_results" not in st.session_state:
     <div style="color:#C8CDD3; line-height:1.7;">
         <strong style="color:#00D4FF;">Sentinel Omega</strong> is a Predictive Business Equilibrium Engine that:
         <ol style="margin-top:10px;">
-            <li><strong>Ingests telemetry + images</strong> — dashboards, diagrams, tweets, logs (reference only)</li>
+            <li><strong>Ingests telemetry + OCR'd images</strong> — dashboards, diagrams, tweets, logs (text extracted, fed to agents)</li>
             <li><strong>Runs Monte Carlo simulations</strong> across 7 parallel universes</li>
             <li><strong>Debates the crisis</strong> with 4 competing agents</li>
             <li><strong>Finds the Nash Equilibrium</strong> — no KPI destroyed</li>

@@ -2,7 +2,9 @@
 
 ### Predictive Business Equilibrium Engine — Multimodal Multiverse Agents on Cerebras
 
-> _Most agent systems are chatbots in a circle. Sentinel Omega ingests live enterprise telemetry and images, runs Monte Carlo across parallel universes, resolves competing corporate incentives via game theory, vetoes its own solutions against regulatory compliance, simulates the future to prevent side effects, and outputs a boardroom-ready financial impact report with an auditable causal chain._
+> _Most agent systems are chatbots in a circle. Sentinel Omega ingests live enterprise telemetry and OCR'd visual evidence, streams a 5-agent debate at 1500+ tokens/sec on Cerebras, runs Monte Carlo across parallel universes, resolves competing corporate incentives via game theory, vetoes its own solutions against regulatory compliance, simulates the future to prevent side effects, and outputs a boardroom-ready financial impact report with an auditable causal chain._
+
+> **All inference runs on `gemma-4-31b` via Cerebras — one model, no exceptions.** Images are OCR'd locally (RapidOCR) and the extracted text feeds the agents; the LLM stays text-only and honest.
 
 ---
 
@@ -10,7 +12,7 @@
 
 **Sentinel Omega** is an AI-powered **crisis war room** that simulates the human decision-making process during a high-stakes production incident — but runs it in **seconds instead of hours**.
 
-Instead of asking one LLM "how do I fix this?", it spawns **five competing AI agents**, each with a different corporate incentive (reliability, brand, adversarial risk, legal compliance, executive mediation), gives them your actual screenshots (dashboards, architecture diagrams, tweets, log images), and lets them **debate, veto, and synthesize** until they find a solution where no stakeholder's KPI is destroyed — a **Nash Equilibrium**.
+Instead of asking one LLM "how do I fix this?", it spawns **five competing AI agents**, each with a different corporate incentive (reliability, brand, adversarial risk, legal compliance, executive mediation), OCRs your actual screenshots (dashboards, architecture diagrams, tweets, log images) and feeds each agent the extracted text, then lets them **debate, veto, and synthesize** until they find a solution where no stakeholder's KPI is destroyed — a **Nash Equilibrium**.
 
 It then **time-travels** — simulating the state of the business at T+1 hour, T+24 hours, and T+7 days — to verify the fix doesn't create a bigger problem later. If the future fails, it re-debates.
 
@@ -51,7 +53,8 @@ Turn that war room into **5 AI agents** that complete the same debate in **~9 se
 | **Explainability** | Black box | Full causal chain: root cause → cascade → resolution |
 | **Self-Awareness** | Confidence theatre | Self-critique with 0–10 scores across 4 dimensions |
 | **Memory** | Stateless | SQLite institutional memory — learns from every incident |
-| **Multimodal** | Some models handle images | Every agent sees images relevant to its role |
+| **Multimodal** | Some models handle images | Images OCR'd locally; each agent reads the real extracted text for its role |
+| **Speed (visible)** | Spinner, then a wall of text | Agents stream their thinking live at 1500+ tok/s; you watch the debate happen |
 | **Speed** | Fast but shallow | 9 seconds for 12-stage recursive loop on Cerebras |
 
 ### vs. Traditional Monitoring Tools (Datadog, PagerDuty, Splunk)
@@ -63,6 +66,17 @@ Turn that war room into **5 AI agents** that complete the same debate in **~9 se
 | **Decision support** | "Page the on-call" | "Here's the plan, here's why, here's what happens if you don't" |
 | **Cross-functional** | SRE-only | SRE + Brand + Legal + Executive mediation in one pass |
 | **Post-incident** | Manual post-mortem writing | Auto-generated downloadable report |
+
+---
+
+## ⚡ Signature Features (what makes the speed *visible*)
+
+Cerebras's whole identity is speed — so Sentinel Omega makes it visceral, not a hidden number:
+
+- **⚡ Live Streaming War Room** — the 4 stakeholder agents + the CEO arbitrator stream their reasoning **token-by-token, in parallel**, straight into the UI. A global **swarm tokens/sec** counter ticks past 1500. You don't wait for an answer — you watch five minds argue a crisis in real time. (`gemma-4-31b` emits reasoning tokens via `delta.reasoning`; we stream them live and return the final answer for the debate logic.)
+- **🐌 GPU Ghost Race** — a side-by-side replay: the Cerebras bar finishes the 12-stage pipeline while a standard-GPU "ghost" (≈60 tok/s) is still crawling through stage 2. Ends on `9.1s vs projected 94s · 10.3× faster`.
+- **📤 Shareable Verdict Card** — one click renders a 1200×630 PNG "Omega Verdict" (net $ impact, agent votes, self-critique score, tok/s, `gemma-4-31b · Cerebras` badge) built for dropping straight into a tweet or Devpost.
+- **🔎 Honest Multimodal (OCR)** — uploads (dashboards, logs, tweets, diagrams) are OCR'd locally with RapidOCR; the **real extracted text** is injected into the relevant agent. The model never pretends to "see" pixels. A `VISION: OCR live` badge shows when real text was extracted.
 
 ---
 
@@ -361,7 +375,9 @@ All times measured on Cerebras with `gemma-4-31b` and `reasoning_effort: high`.
 
 | Layer | Technology |
 |---|---|
-| **AI Model** | `gemma-4-31b` via Cerebras API |
+| **AI Model** | `gemma-4-31b` via Cerebras API — **sole inference model** |
+| **Streaming** | `AsyncCerebras` `stream=True`; reasoning tokens bridged to Streamlit via a thread+queue |
+| **Multimodal** | RapidOCR (`rapidocr-onnxruntime`) — local image→text, fed to the agents |
 | **Orchestration** | `asyncio.gather` with `Semaphore(8)` rate limiting |
 | **Data Models** | Pydantic v2 `BaseModel` for all inter-module transfers |
 | **Architecture** | Abstract Base Classes, modular service-oriented design |
