@@ -1,0 +1,20 @@
+{
+    "Black Friday Cascade": {
+        "title": "The Black Friday Cascade",
+        "context": "It is 12:01 AM on Black Friday. The global checkout service is experiencing 40% error rates. A recent deployment to the payment gateway created a race condition that is poisoning the distributed cache. Public sentiment is plummeting on X (Twitter), the JP market is trending #BoycottYourBrand, and the CEO is demanding a real-time status update every 15 minutes while major retailers are threatening to pull their integrations.",
+        "region": "JP",
+        "suggested_image_keys": ["architecture", "dashboard", "twitter", "error_log"]
+    },
+    "Satellite De-orbit Crisis": {
+        "title": "Orbital Decay Crisis",
+        "context": "A critical telemetry bug has caused a fleet of 12 communications satellites to enter a decay orbit. They will re-enter the atmosphere in 48 hours. The government is demanding an immediate fix, but the only available patch requires a reboot that will kill all current global signals for 30 minutes.",
+        "region": "GLOBAL",
+        "suggested_image_keys": ["architecture", "dashboard"]
+    },
+    "Global Finance Flash-Crash": {
+        "title": "Algorithmic Flash-Crash",
+        "context": "An algorithmic trading bot has entered a recursive loop, selling off a major currency at millisecond speeds. Global markets are crashing. The Central Bank wants to freeze all trading, but doing so would cause a worldwide liquidity panic. $2.4B has been lost in 7 minutes.",
+        "region": "US",
+        "suggested_image_keys": ["dashboard", "twitter", "error_log"]
+    }
+}

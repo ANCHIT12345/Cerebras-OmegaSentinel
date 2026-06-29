@@ -1,0 +1,8 @@
+streamlit>=1.30
+cerebras-cloud-sdk>=1.0
+python-dotenv
+pydantic>=2
+plotly
+pandas
+pillow
+rapidocr-onnxruntime  # optional: OCR evidence extraction for honest multimodal
